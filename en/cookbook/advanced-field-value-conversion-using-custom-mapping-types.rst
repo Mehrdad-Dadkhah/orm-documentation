@@ -93,7 +93,7 @@ The point class:
 
     <?php
 
-    namespace App\web\one\Domain\Restaurant\Deliveryzone\Model\valueObjects;
+    namespace Geo\ValueObject;
 
     use Assert\Assertion;
     class Point
@@ -143,8 +143,8 @@ Now we're going to create the ``point`` type and implement all required methods.
 
     <?php
 
-    namespace App\web\one\Domain\Restaurant\Deliveryzone\Model\Types;
-
+    namespace Geo\Types;
+    
     use Doctrine\DBAL\Types\Type;
     use Doctrine\DBAL\Platforms\AbstractPlatform;
     use App\web\one\Domain\Restaurant\Deliveryzone\Model\valueObjects\Point;
