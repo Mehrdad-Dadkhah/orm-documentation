@@ -92,9 +92,10 @@ The point class:
 .. code-block:: php
 
     <?php
-    
-    namespace Geo\ValueObject;
 
+    namespace App\web\one\Domain\Restaurant\Deliveryzone\Model\valueObjects;
+
+    use Assert\Assertion;
     class Point
     {
 
@@ -123,6 +124,14 @@ The point class:
         {
             return $this->longitude;
         }
+
+        /**
+         * @return string
+         */
+        public function __toString()
+        {
+            return $this->latitude .' '. $this->longitude;
+        }
     }
 
 The mapping type
@@ -134,12 +143,11 @@ Now we're going to create the ``point`` type and implement all required methods.
 
     <?php
 
-    namespace Geo\Types;
+    namespace App\web\one\Domain\Restaurant\Deliveryzone\Model\Types;
 
     use Doctrine\DBAL\Types\Type;
     use Doctrine\DBAL\Platforms\AbstractPlatform;
-
-    use Geo\ValueObject\Point;
+    use App\web\one\Domain\Restaurant\Deliveryzone\Model\valueObjects\Point;
 
     class PointType extends Type
     {
@@ -150,14 +158,14 @@ Now we're going to create the ``point`` type and implement all required methods.
             return self::POINT;
         }
 
-        public function getSqlDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+        public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
         {
             return 'POINT';
         }
 
         public function convertToPHPValue($value, AbstractPlatform $platform)
         {
-            list($longitude, $latitude) = sscanf($value, 'POINT(%f %f)');
+            list($latitude, $longitude) = sscanf($value, 'POINT(%f %f)');
 
             return new Point($latitude, $longitude);
         }
@@ -165,7 +173,7 @@ Now we're going to create the ``point`` type and implement all required methods.
         public function convertToDatabaseValue($value, AbstractPlatform $platform)
         {
             if ($value instanceof Point) {
-                $value = sprintf('POINT(%F %F)', $value->getLongitude(), $value->getLatitude());
+                $value = sprintf('POINT(%F %F)', $value->getLatitude(), $value->getLongitude());
             }
 
             return $value;
@@ -176,7 +184,7 @@ Now we're going to create the ``point`` type and implement all required methods.
             return true;
         }
 
-        public function convertToPHPValueSQL($sqlExpr, AbstractPlatform $platform)
+        public function convertToPHPValueSQL($sqlExpr, $platform)
         {
             return sprintf('AsText(%s)', $sqlExpr);
         }
